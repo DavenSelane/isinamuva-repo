@@ -247,7 +247,6 @@ const StudyPlannerPage = () => {
 
       if (response.ok) {
         const newEvent = await response.json();
-        // Real-time update: Immediately add to events state
         setEvents((prevEvents) => [
           ...prevEvents,
           {
@@ -263,10 +262,8 @@ const StudyPlannerPage = () => {
           description: "",
           allDay: false,
           color: "#3b82f6",
-          type: "",
+          type: "Study Session",
         });
-
-        setSelectedSlot(null);
       } else {
         toast.error("Failed to create event");
       }
@@ -283,11 +280,11 @@ const StudyPlannerPage = () => {
       });
 
       if (response.ok) {
-        // Real-time update: Immediately remove from events state
         setEvents((prevEvents) =>
           prevEvents.filter((event) => event.id !== eventId)
         );
         toast.success("Event deleted successfully!");
+        setSelectedEvent(null);
       } else {
         toast.error("Failed to delete event");
       }
@@ -297,825 +294,139 @@ const StudyPlannerPage = () => {
     }
   };
 
-  const handleEventDrop = async (data: {
-    event: any;
-    start: Date;
-    end: Date;
-  }) => {
-    try {
-      const response = await fetch(`/api/calendar/${data.event.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: data.event.title,
-          description: data.event.description,
-          start: data.start,
-          end: data.end,
-          allDay: data.event.allDay,
-          color: data.event.color,
-        }),
-      });
-
-      if (response.ok) {
-        const updatedEvent = await response.json();
-        // Real-time update: Update the event in state
-        setEvents((prevEvents) =>
-          prevEvents.map((event) =>
-            event.id === data.event.id
-              ? {
-                  ...event,
-                  start: new Date(updatedEvent.start),
-                  end: new Date(updatedEvent.end),
-                }
-              : event
-          )
-        );
-        toast.success("Event time updated!");
-      } else {
-        toast.error("Failed to update event");
-      }
-    } catch (error) {
-      console.error("Error updating event:", error);
-      toast.error("Failed to update event");
-    }
-  };
-
-  const handleEventResize = async (data: {
-    event: any;
-    start: Date;
-    end: Date;
-  }) => {
-    try {
-      const response = await fetch(`/api/calendar/${data.event.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: data.event.title,
-          description: data.event.description,
-          start: data.start,
-          end: data.end,
-          allDay: data.event.allDay,
-          color: data.event.color,
-        }),
-      });
-
-      if (response.ok) {
-        const updatedEvent = await response.json();
-        // Real-time update: Update the event in state
-        setEvents((prevEvents) =>
-          prevEvents.map((event) =>
-            event.id === data.event.id
-              ? {
-                  ...event,
-                  start: new Date(updatedEvent.start),
-                  end: new Date(updatedEvent.end),
-                }
-              : event
-          )
-        );
-        toast.success("Event duration updated!");
-      } else {
-        toast.error("Failed to resize event");
-      }
-    } catch (error) {
-      console.error("Error resizing event:", error);
-      toast.error("Failed to resize event");
-    }
-  };
-
-  const eventStyleGetter = (event: CalendarEvent) => {
-    return {
-      style: {
-        backgroundColor: event.color,
-        borderRadius: "5px",
-        opacity: 0.8,
-        color: "white",
-        border: "0px",
-        display: "block",
-      },
-    };
-  };
-
-  if (loading) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ minHeight: "400px" }}
-      >
-        <div className="text-center">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-          <p className="mt-3 text-muted">Loading your study planner...</p>
-        </div>
-      </div>
-    );
-  }
-
-  const todayEvents = events.filter((event) => {
-    const today = new Date();
-    const eventDate = new Date(event.start);
-    return eventDate.toDateString() === today.toDateString();
-  });
-
-  // Filter events based on type and search
-  const filteredEvents = events.filter((event) => {
-    const matchesType =
-      filterType === "all" ||
-      EVENT_TYPES.find((t) => t.name === filterType)?.color === event.color;
-    const matchesSearch =
-      event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (event.description &&
-        event.description.toLowerCase().includes(searchTerm.toLowerCase()));
-    return matchesType && matchesSearch;
-  });
-
-  const upcomingEvents = filteredEvents
-    .filter((event) => new Date(event.start) > new Date())
-    .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
-    .slice(0, 5);
-
   return (
-    <div className="container-fluid mt-4 mb-5">
-      {/* Header Section */}
-      <div className="row mb-4">
-        <div className="col-lg-8">
-          <div className="d-flex align-items-center mb-3">
-            <div
-              className="rounded-circle d-flex align-items-center justify-content-center me-3"
-              style={{
-                width: "60px",
-                height: "60px",
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-              }}
-            >
-              <i className="fas fa-calendar-alt fa-2x text-white"></i>
-            </div>
-            <div>
-              <h1
-                className="mb-1"
-                style={{ fontWeight: "700", color: "#1e293b" }}
-              >
-                My Study Planner
-              </h1>
-              <p className="text-muted mb-0">
-                Plan your study schedule and stay organized 📚
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="col-lg-4 text-end">
-          <div className="d-flex gap-2 justify-content-end">
-            <button
-              className="btn btn-outline-primary"
-              onClick={exportCalendar}
-              title="Export Calendar"
-            >
-              <i className="fas fa-download"></i>
-            </button>
-            <button
-              className="btn btn-lg text-white shadow-sm"
-              style={{
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                border: "none",
-                borderRadius: "12px",
-              }}
-              onClick={() => {
-                setSelectedSlot({
-                  start: new Date(),
-                  end: new Date(new Date().getTime() + 60 * 60 * 1000),
-                });
-                setShowModal(true);
-              }}
-            >
-              <i className="fas fa-plus me-2"></i>
-              Add New Event
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Search and Filter Controls */}
-      <div className="row mb-4">
-        <div className="col-12">
-          <div
-            className="card border-0 shadow-sm"
-            style={{ borderRadius: "12px" }}
-          >
-            <div className="card-body">
-              <div className="row g-3">
-                <div className="col-md-6">
-                  <label className="form-label small fw-bold text-muted">
-                    SEARCH EVENTS
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search by title or description..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{ borderRadius: "8px" }}
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label small fw-bold text-muted">
-                    FILTER BY TYPE
-                  </label>
-                  <select
-                    className="form-select"
-                    value={filterType}
-                    onChange={(e) => setFilterType(e.target.value)}
-                    style={{ borderRadius: "8px" }}
-                  >
-                    <option value="all">All Events</option>
-                    {EVENT_TYPES.map((type) => (
-                      <option key={type.name} value={type.name}>
-                        {type.icon} {type.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              {(searchTerm || filterType !== "all") && (
-                <div className="mt-3">
-                  <span className="badge bg-primary me-2">
-                    {filteredEvents.length} event
-                    {filteredEvents.length !== 1 ? "s" : ""} found
-                  </span>
-                  <button
-                    className="btn btn-sm btn-outline-secondary"
-                    onClick={() => {
-                      setSearchTerm("");
-                      setFilterType("all");
-                    }}
-                  >
-                    Clear Filters
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="row">
-        {/* Sidebar */}
-        <div className="col-lg-3 mb-4">
-          {/* Today's Events */}
-          <div
-            className="card border-0 shadow-sm mb-4"
-            style={{ borderRadius: "16px" }}
-          >
-            <div
-              className="card-header border-0 text-white"
-              style={{
-                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                borderRadius: "16px 16px 0 0",
-              }}
-            >
-              <h6 className="mb-0 fw-bold">
-                <i className="fas fa-clock me-2"></i>Today's Schedule
-              </h6>
-            </div>
-            <div
-              className="card-body"
-              style={{ maxHeight: "300px", overflowY: "auto" }}
-            >
-              {todayEvents.length === 0 ? (
-                <p className="text-muted small mb-0">
-                  No events scheduled for today
-                </p>
-              ) : (
-                todayEvents.map((event) => (
-                  <div
-                    key={event.id}
-                    className="p-2 mb-2 rounded"
-                    style={{
-                      backgroundColor: event.color + "20",
-                      borderLeft: `4px solid ${event.color}`,
-                      cursor: "pointer",
-                    }}
-                    onClick={() => setSelectedEvent(event)}
-                  >
-                    <div className="d-flex justify-content-between align-items-start">
-                      <div>
-                        <div
-                          className="fw-bold small"
-                          style={{ color: event.color }}
-                        >
-                          {event.title}
-                        </div>
-                        <div
-                          className="text-muted"
-                          style={{ fontSize: "0.75rem" }}
-                        >
-                          {moment(event.start).format("h:mm A")} -{" "}
-                          {moment(event.end).format("h:mm A")}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Upcoming Events */}
-          <div
-            className="card border-0 shadow-sm mb-4"
-            style={{ borderRadius: "16px" }}
-          >
-            <div
-              className="card-header border-0 text-white"
-              style={{
-                background: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-                borderRadius: "16px 16px 0 0",
-              }}
-            >
-              <h6 className="mb-0 fw-bold">
-                <i className="fas fa-calendar-week me-2"></i>Upcoming
-              </h6>
-            </div>
-            <div
-              className="card-body"
-              style={{ maxHeight: "300px", overflowY: "auto" }}
-            >
-              {upcomingEvents.length === 0 ? (
-                <p className="text-muted small mb-0">No upcoming events</p>
-              ) : (
-                upcomingEvents.map((event) => (
-                  <div
-                    key={event.id}
-                    className="p-2 mb-2 rounded"
-                    style={{
-                      backgroundColor: event.color + "20",
-                      borderLeft: `4px solid ${event.color}`,
-                      cursor: "pointer",
-                    }}
-                    onClick={() => setSelectedEvent(event)}
-                  >
-                    <div
-                      className="fw-bold small"
-                      style={{ color: event.color }}
-                    >
-                      {event.title}
-                    </div>
-                    <div className="text-muted" style={{ fontSize: "0.75rem" }}>
-                      {moment(event.start).format("MMM D, h:mm A")}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Quick Stats */}
-          <div
-            className="card border-0 shadow-sm"
-            style={{ borderRadius: "16px" }}
-          >
-            <div className="card-body text-center">
-              <div className="mb-3">
-                <div
-                  className="rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
-                  style={{
-                    width: "80px",
-                    height: "80px",
-                    background:
-                      "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
-                  }}
-                >
-                  <h2 className="mb-0 fw-bold" style={{ color: "#d97757" }}>
-                    {events.length}
-                  </h2>
-                </div>
-                <p className="text-muted small mb-0">Total Events</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Calendar */}
-        <div className="col-lg-9">
-          <div
-            className="card border-0 shadow-sm"
-            style={{ borderRadius: "16px", overflow: "hidden" }}
-          >
-            <div className="card-body p-4">
-              <div className="mb-3 d-flex justify-content-between align-items-center">
-                <div className="text-muted small">
-                  <i className="fas fa-info-circle me-1"></i>
-                  <strong>Drag & drop</strong> to reschedule •{" "}
-                  <strong>Resize</strong> to adjust duration
-                </div>
-                <div className="btn-group btn-group-sm" role="group">
-                  <button
-                    type="button"
-                    className={`btn ${
-                      view === Views.MONTH
-                        ? "btn-primary"
-                        : "btn-outline-primary"
-                    }`}
-                    onClick={() => setView(Views.MONTH)}
-                  >
-                    Month
-                  </button>
-                  <button
-                    type="button"
-                    className={`btn ${
-                      view === Views.WEEK
-                        ? "btn-primary"
-                        : "btn-outline-primary"
-                    }`}
-                    onClick={() => setView(Views.WEEK)}
-                  >
-                    Week
-                  </button>
-                  <button
-                    type="button"
-                    className={`btn ${
-                      view === Views.DAY ? "btn-primary" : "btn-outline-primary"
-                    }`}
-                    onClick={() => setView(Views.DAY)}
-                  >
-                    Day
-                  </button>
-                  <button
-                    type="button"
-                    className={`btn ${
-                      view === Views.AGENDA
-                        ? "btn-primary"
-                        : "btn-outline-primary"
-                    }`}
-                    onClick={() => setView(Views.AGENDA)}
-                  >
-                    Agenda
-                  </button>
-                </div>
-              </div>
-              <div style={{ height: "600px" }}>
-                <BigCalendar
-                  events={events}
-                  onSelectSlot={handleSelectSlot}
-                  onSelectEvent={handleSelectEvent}
-                  onEventDrop={handleEventDrop}
-                  onEventResize={handleEventResize}
-                  selectable={true}
-                  editable={true}
-                  views={["month", "week", "day", "agenda"]}
-                  defaultView={view}
-                  eventPropGetter={eventStyleGetter}
-                  style={{ height: "100%" }}
-                  min={new Date(0, 0, 0, 6, 0, 0)}
-                  max={new Date(0, 0, 0, 23, 0, 0)}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Event Creation Modal */}
-      {showModal && (
-        <div
-          className="modal show d-block"
-          style={{
-            backgroundColor: "rgba(0,0,0,0.6)",
-            backdropFilter: "blur(4px)",
-          }}
-          onClick={() => setShowModal(false)}
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Study Planner & Organizer 📚</h1>
+      <div className="flex justify-between mb-4">
+        <button
+          onClick={exportCalendar}
+          className="bg-green-500 text-white px-4 py-2 rounded"
         >
-          <div
-            className="modal-dialog modal-dialog-centered"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div
-              className="modal-content border-0 shadow-lg"
-              style={{ borderRadius: "20px" }}
-            >
-              <div
-                className="modal-header border-0 text-white"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                  borderRadius: "20px 20px 0 0",
-                }}
+          Export Calendar
+        </button>
+      </div>
+
+      {loading ? (
+        <p>Loading calendar...</p>
+      ) : (
+        <BigCalendar
+          events={events.filter((event) =>
+            filterType === "all" ? true : event.type === filterType
+          )}
+          startAccessor="start"
+          endAccessor="end"
+          selectable
+          onSelectEvent={handleSelectEvent}
+          onSelectSlot={handleSelectSlot}
+          view={view}
+          onView={(v) => setView(v)}
+          views={["month", "week", "day"]}
+          style={{ height: "80vh" }}
+        />
+      )}
+
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">Add New Event</h2>
+            <input
+              type="text"
+              placeholder="Event title"
+              value={eventForm.title}
+              onChange={(e) =>
+                setEventForm({ ...eventForm, title: e.target.value })
+              }
+              className="border p-2 w-full mb-2 rounded"
+            />
+            <textarea
+              placeholder="Description"
+              value={eventForm.description}
+              onChange={(e) =>
+                setEventForm({ ...eventForm, description: e.target.value })
+              }
+              className="border p-2 w-full mb-2 rounded"
+            />
+            <div className="flex justify-between mb-2">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={eventForm.allDay}
+                  onChange={(e) =>
+                    setEventForm({ ...eventForm, allDay: e.target.checked })
+                  }
+                />
+                All day
+              </label>
+              <select
+                value={eventForm.type}
+                onChange={(e) =>
+                  setEventForm({ ...eventForm, type: e.target.value })
+                }
+                className="border p-1 rounded"
               >
-                <h5 className="modal-title fw-bold">
-                  <i className="fas fa-calendar-plus me-2"></i>
-                  Create New Event
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close btn-close-white"
-                  onClick={() => setShowModal(false)}
-                ></button>
-              </div>
-              <div
-                className="modal-body p-4"
-                style={{ maxHeight: "60vh", overflowY: "auto" }}
+                {EVENT_TYPES.map((type) => (
+                  <option key={type.name} value={type.name}>
+                    {type.icon} {type.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setShowModal(false)}
+                className="bg-gray-500 text-white px-4 py-2 rounded"
               >
-                {/* Event Type Selection */}
-                <div className="mb-4">
-                  <label className="form-label fw-bold text-muted small">
-                    EVENT TYPE
-                  </label>
-                  <div className="d-flex flex-wrap gap-2">
-                    {EVENT_TYPES.map((type) => (
-                      <button
-                        key={type.name}
-                        type="button"
-                        className={`btn btn-sm ${
-                          eventForm.type === type.name
-                            ? "btn-primary"
-                            : "btn-outline-secondary"
-                        }`}
-                        style={{
-                          borderRadius: "20px",
-                          border:
-                            eventForm.type === type.name
-                              ? "2px solid " + type.color
-                              : "",
-                          backgroundColor:
-                            eventForm.type === type.name ? type.color : "",
-                        }}
-                        onClick={() =>
-                          setEventForm({
-                            ...eventForm,
-                            type: type.name,
-                            color: type.color,
-                          })
-                        }
-                      >
-                        <span className="me-1">{type.icon}</span>
-                        {type.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Title Input */}
-                <div className="mb-3">
-                  <label className="form-label fw-bold text-muted small">
-                    TITLE *
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control form-control-lg"
-                    style={{
-                      borderRadius: "12px",
-                      border: "2px solid #e2e8f0",
-                    }}
-                    value={eventForm.title}
-                    onChange={(e) =>
-                      setEventForm({ ...eventForm, title: e.target.value })
-                    }
-                    placeholder="e.g., Mathematics Study Session"
-                    autoFocus
-                  />
-                </div>
-
-                {/* Description */}
-                <div className="mb-3">
-                  <label className="form-label fw-bold text-muted small">
-                    DESCRIPTION
-                  </label>
-                  <textarea
-                    className="form-control"
-                    rows={3}
-                    style={{
-                      borderRadius: "12px",
-                      border: "2px solid #e2e8f0",
-                    }}
-                    value={eventForm.description}
-                    onChange={(e) =>
-                      setEventForm({
-                        ...eventForm,
-                        description: e.target.value,
-                      })
-                    }
-                    placeholder="Add notes, topics, or reminders..."
-                  />
-                </div>
-
-                {/* Time Display */}
-                {selectedSlot && (
-                  <div className="mb-3">
-                    <label className="form-label fw-bold text-muted small">
-                      TIME
-                    </label>
-                    <div
-                      className="p-3 rounded"
-                      style={{ backgroundColor: "#f8fafc" }}
-                    >
-                      <div className="d-flex align-items-center">
-                        <i className="fas fa-clock text-primary me-2"></i>
-                        <span>
-                          {moment(selectedSlot.start).format(
-                            "MMM D, YYYY - h:mm A"
-                          )}
-                          {" → "}
-                          {moment(selectedSlot.end).format("h:mm A")}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Color Selection */}
-                <div className="mb-3">
-                  <label className="form-label fw-bold text-muted small">
-                    COLOR
-                  </label>
-                  <div className="d-flex gap-2 flex-wrap">
-                    {PRESET_COLORS.map((colorOption) => (
-                      <button
-                        key={colorOption.value}
-                        type="button"
-                        className={`btn position-relative ${
-                          eventForm.color === colorOption.value
-                            ? "border-3"
-                            : ""
-                        }`}
-                        style={{
-                          backgroundColor: colorOption.value,
-                          width: "50px",
-                          height: "50px",
-                          borderRadius: "12px",
-                          border:
-                            eventForm.color === colorOption.value
-                              ? "3px solid #1e293b"
-                              : "2px solid #e2e8f0",
-                        }}
-                        onClick={() =>
-                          setEventForm({
-                            ...eventForm,
-                            color: colorOption.value,
-                          })
-                        }
-                      >
-                        {eventForm.color === colorOption.value && (
-                          <i className="fas fa-check text-white"></i>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* All Day Toggle */}
-                <div className="form-check form-switch">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    id="allDayCheck"
-                    style={{ width: "50px", height: "25px", cursor: "pointer" }}
-                    checked={eventForm.allDay}
-                    onChange={(e) =>
-                      setEventForm({ ...eventForm, allDay: e.target.checked })
-                    }
-                  />
-                  <label
-                    className="form-check-label ms-2 fw-bold text-muted"
-                    htmlFor="allDayCheck"
-                    style={{ cursor: "pointer" }}
-                  >
-                    All Day Event
-                  </label>
-                </div>
-              </div>
-              <div className="modal-footer border-0 p-4">
-                <button
-                  type="button"
-                  className="btn btn-light btn-lg px-4"
-                  style={{ borderRadius: "12px" }}
-                  onClick={() => setShowModal(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-lg px-4 text-white"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-                    borderRadius: "12px",
-                    border: "none",
-                  }}
-                  onClick={createEvent}
-                >
-                  <i className="fas fa-check me-2"></i>
-                  Create Event
-                </button>
-              </div>
+                Cancel
+              </button>
+              <button
+                onClick={createEvent}
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                Add Event
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Event Detail Modal */}
       {selectedEvent && (
-        <div
-          className="modal show d-block"
-          style={{
-            backgroundColor: "rgba(0,0,0,0.6)",
-            backdropFilter: "blur(4px)",
-          }}
-          onClick={() => setSelectedEvent(null)}
-        >
-          <div
-            className="modal-dialog modal-dialog-centered"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div
-              className="modal-content border-0 shadow-lg"
-              style={{ borderRadius: "20px" }}
-            >
-              <div
-                className="modal-header border-0 text-white"
-                style={{
-                  background: `linear-gradient(135deg, ${selectedEvent.color} 0%, ${selectedEvent.color}dd 100%)`,
-                  borderRadius: "20px 20px 0 0",
-                }}
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">{selectedEvent.title}</h2>
+            <p className="mb-2">
+              {selectedEvent.description || "No description provided."}
+            </p>
+            <p className="mb-2">
+              From: {moment(selectedEvent.start).format("MMMM Do YYYY, h:mm a")}
+            </p>
+            <p className="mb-4">
+              To: {moment(selectedEvent.end).format("MMMM Do YYYY, h:mm a")}
+            </p>
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => duplicateEvent(selectedEvent)}
+                className="bg-yellow-500 text-white px-4 py-2 rounded"
               >
-                <h5 className="modal-title fw-bold">
-                  <i className="fas fa-calendar-check me-2"></i>
-                  Event Details
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close btn-close-white"
-                  onClick={() => setSelectedEvent(null)}
-                ></button>
-              </div>
-              <div className="modal-body p-4">
-                <h4 className="mb-3 fw-bold">{selectedEvent.title}</h4>
-
-                {selectedEvent.description && (
-                  <div className="mb-3">
-                    <p className="text-muted mb-1 small fw-bold">DESCRIPTION</p>
-                    <p>{selectedEvent.description}</p>
-                  </div>
-                )}
-
-                <div className="mb-3">
-                  <p className="text-muted mb-1 small fw-bold">TIME</p>
-                  <div className="d-flex align-items-center">
-                    <i
-                      className="fas fa-clock me-2"
-                      style={{ color: selectedEvent.color }}
-                    ></i>
-                    <span>
-                      {moment(selectedEvent.start).format(
-                        "MMM D, YYYY - h:mm A"
-                      )}
-                      {!selectedEvent.allDay && (
-                        <>
-                          {" → "}
-                          {moment(selectedEvent.end).format("h:mm A")}
-                        </>
-                      )}
-                      {selectedEvent.allDay && " (All Day)"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mb-3">
-                  <p className="text-muted mb-1 small fw-bold">COLOR</p>
-                  <div
-                    className="d-inline-block rounded"
-                    style={{
-                      backgroundColor: selectedEvent.color,
-                      width: "40px",
-                      height: "40px",
-                      border: "2px solid #e2e8f0",
-                    }}
-                  ></div>
-                </div>
-              </div>
-              <div className="modal-footer border-0 p-4">
-                <button
-                  type="button"
-                  className="btn btn-light btn-lg px-4"
-                  style={{ borderRadius: "12px" }}
-                  onClick={() => setSelectedEvent(null)}
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-danger btn-lg px-4"
-                  style={{ borderRadius: "12px" }}
-                  onClick={() => {
-                    if (window.confirm(`Delete "${selectedEvent.title}"?`)) {
-                      deleteEvent(selectedEvent.id);
-                      setSelectedEvent(null);
-                    }
-                  }}
-                >
-                  <i className="fas fa-trash me-2"></i>
-                  Delete Event
-                </button>
-              </div>
+                Duplicate
+              </button>
+              <button
+                onClick={() => deleteEvent(selectedEvent.id)}
+                className="bg-red-500 text-white px-4 py-2 rounded"
+              >
+                Delete
+              </button>
+              <button
+                onClick={() => handleEditEvent(selectedEvent)}
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => setSelectedEvent(null)}
+                className="bg-gray-500 text-white px-4 py-2 rounded"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>
