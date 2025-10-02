@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -22,24 +23,24 @@ model User {
   firstName String
   lastName  String
 
-  @@index([role])
-  @@index([classId])
-  @@index([gradeId])
-
-  supervisedClasses Class[]         @relation("ClassSupervisor")
-  tutorLessons      Lesson[]        @relation("TutorLessons")
-  studentResults    Result[]
-  class             Class?          @relation(fields: [classId], references: [id])
-  grade             Grade?          @relation(fields: [gradeId], references: [id])
-  parent            User?           @relation("ParentChildren", fields: [parentId], references: [id])
-  children          User[]          @relation("ParentChildren")
-  announcements     Announcement[]
-  calendarEvents    CalendarEvent[]
-  createdAssignments Assignment[]   @relation("AssignmentCreator")
+  supervisedClasses  Class[]         @relation("ClassSupervisor")
+  tutorLessons       Lesson[]        @relation("TutorLessons")
+  studentResults     Result[]
+  class              Class?          @relation(fields: [classId], references: [id])
+  grade              Grade?          @relation(fields: [gradeId], references: [id])
+  parent             User?           @relation("ParentChildren", fields: [parentId], references: [id])
+  children           User[]          @relation("ParentChildren")
+  announcements      Announcement[]
+  calendarEvents     CalendarEvent[]
+  createdAssignments Assignment[]    @relation("AssignmentCreator")
 
   subjectsTaught   Subject[] @relation("SubjectTutors")
   subjectsEnrolled Subject[] @relation("SubjectStudents")
   Content          Content[]
+
+  @@index([role])
+  @@index([classId])
+  @@index([gradeId])
 }
 
 model Grade {
@@ -113,18 +114,18 @@ model Assignment {
 }
 
 model Result {
-  id           Int         @id @default(autoincrement())
-  score        Float       @default(0)
-  studentId    Int
-  assignmentId Int?
-  answers      String? // JSON array of student answers
-  feedback     String? // AI-generated feedback
-  submittedAt  DateTime    @default(now())
-  gradedAt     DateTime?
-  submissionUrl String?   // URL to student's uploaded work
-  status       String      @default("submitted") // submitted, graded, pending
-  assignment   Assignment? @relation(fields: [assignmentId], references: [id])
-  student      User        @relation(fields: [studentId], references: [id])
+  id            Int         @id @default(autoincrement())
+  score         Float       @default(0)
+  studentId     Int
+  assignmentId  Int?
+  answers       String? // JSON array of student answers
+  feedback      String? // AI-generated feedback
+  submittedAt   DateTime    @default(now())
+  gradedAt      DateTime?
+  submissionUrl String? // URL to student's uploaded work
+  status        String      @default("submitted") // submitted, graded, pending
+  assignment    Assignment? @relation(fields: [assignmentId], references: [id])
+  student       User        @relation(fields: [studentId], references: [id])
 }
 
 enum ContentType {

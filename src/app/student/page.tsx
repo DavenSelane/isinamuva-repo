@@ -164,31 +164,6 @@ export default function Page() {
                   Track your learning journey, scores, and goals.
                 </p>
 
-                {/* RadialBarChart for Progress */}
-                <RadialBarChart
-                  width={250}
-                  height={250}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius="10%"
-                  outerRadius="80%"
-                  barSize={15}
-                  data={progressData}
-                >
-                  <PolarAngleAxis
-                    type="number"
-                    domain={[0, 100]}
-                    tick={false}
-                  />
-                  <MyRadialBar
-                    minAngle={15}
-                    clockWise
-                    dataKey="value"
-                    background
-                    label={{ position: "insideStart", fill: "#000" }}
-                  />
-                </RadialBarChart>
-
                 <Link
                   href="/student/progress"
                   className="btn btn-outline-primary rounded-pill px-4 mt-3"
