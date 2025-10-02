@@ -1,0 +1,201 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String
+  role      UserRole?
+  createdAt DateTime  @default(now())
+  image     String?
+  bio       String?
+  phone     String?
+  gradeId   Int?
+  classId   Int?
+  parentId  Int?
+  firstName String
+  lastName  String
+
+  @@index([role])
+  @@index([classId])
+  @@index([gradeId])
+
+  supervisedClasses Class[]         @relation("ClassSupervisor")
+  tutorLessons      Lesson[]        @relation("TutorLessons")
+  studentResults    Result[]
+  class             Class?          @relation(fields: [classId], references: [id])
+  grade             Grade?          @relation(fields: [gradeId], references: [id])
+  parent            User?           @relation("ParentChildren", fields: [parentId], references: [id])
+  children          User[]          @relation("ParentChildren")
+  announcements     Announcement[]
+  calendarEvents    CalendarEvent[]
+  createdAssignments Assignment[]   @relation("AssignmentCreator")
+
+  subjectsTaught   Subject[] @relation("SubjectTutors")
+  subjectsEnrolled Subject[] @relation("SubjectStudents")
+  Content          Content[]
+}
+
+model Grade {
+  id      Int     @id @default(autoincrement())
+  name    String
+  classes Class[]
+  users   User[]
+}
+
+model Class {
+  id           Int      @id @default(autoincrement())
+  name         String
+  gradeId      Int
+  supervisorId Int
+  grade        Grade    @relation(fields: [gradeId], references: [id])
+  supervisor   User     @relation("ClassSupervisor", fields: [supervisorId], references: [id])
+  lessons      Lesson[]
+  students     User[]
+}
+
+model Subject {
+  id          Int          @id @default(autoincrement())
+  name        String
+  contents    Content[]
+  lessons     Lesson[]
+  assignments Assignment[]
+  tutors      User[]       @relation("SubjectTutors")
+  students    User[]       @relation("SubjectStudents")
+}
+
+model Lesson {
+  id          Int          @id @default(autoincrement())
+  topic       String
+  subjectId   Int
+  classId     Int
+  tutorId     Int
+  assignments Assignment[]
+
+  class   Class   @relation(fields: [classId], references: [id])
+  subject Subject @relation(fields: [subjectId], references: [id])
+  tutor   User    @relation("TutorLessons", fields: [tutorId], references: [id])
+
+  @@index([subjectId])
+  @@index([classId])
+  @@index([tutorId])
+}
+
+model Assignment {
+  id          Int      @id @default(autoincrement())
+  title       String
+  dueDate     DateTime
+  pdfUrl      String? // uploaded PDF for assignment
+  solutionUrl String? // solution visible to students after due date
+  imgUrl      String? // image URL for assignment
+  description String? // assignment description/instructions
+  questions   String? // JSON array of questions for AI marking
+  maxScore    Float    @default(100)
+  results     Result[]
+  Lesson      Lesson?  @relation(fields: [lessonId], references: [id])
+  lessonId    Int?
+  subject     Subject? @relation(fields: [subjectId], references: [id])
+  subjectId   Int?
+  createdBy   User?    @relation("AssignmentCreator", fields: [createdById], references: [id])
+  createdById Int?
+  createdAt   DateTime @default(now())
+
+  @@index([lessonId])
+  @@index([subjectId])
+  @@index([dueDate])
+  @@index([createdById])
+}
+
+model Result {
+  id           Int         @id @default(autoincrement())
+  score        Float       @default(0)
+  studentId    Int
+  assignmentId Int?
+  answers      String? // JSON array of student answers
+  feedback     String? // AI-generated feedback
+  submittedAt  DateTime    @default(now())
+  gradedAt     DateTime?
+  submissionUrl String?   // URL to student's uploaded work
+  status       String      @default("submitted") // submitted, graded, pending
+  assignment   Assignment? @relation(fields: [assignmentId], references: [id])
+  student      User        @relation(fields: [studentId], references: [id])
+}
+
+enum ContentType {
+  VIDEO
+  DOCUMENT
+  QUIZ
+}
+
+enum Difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+model Content {
+  id          Int         @id @default(autoincrement())
+  title       String
+  type        ContentType
+  subjectId   Int
+  grades      Int
+  description String
+  body        String? // rich text / notes
+  videoUrl    String? // for VIDEO
+  documentUrl String? // for DOCUMENT (PDF/slides URL)
+
+  difficulty    Difficulty @default(INTERMEDIATE)
+  tags          String[]   @default([])
+  allowComments Boolean    @default(true)
+  featured      Boolean    @default(false)
+  imageUrl      String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  subject       Subject    @relation(fields: [subjectId], references: [id])
+  authorId      Int?
+  author        User?      @relation(fields: [authorId], references: [id])
+
+  @@index([subjectId])
+  @@index([grades])
+  @@index([type])
+  @@index([createdAt])
+}
+
+enum UserRole {
+  ADMIN
+  TUTOR
+  PARENT
+  STUDENT
+}
+
+model Announcement {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  date        DateTime @default(now())
+  authorId    Int
+  author      User     @relation(fields: [authorId], references: [id])
+  classId     Int? // if null, announcement is for all users
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CalendarEvent {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  start       DateTime
+  end         DateTime
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  allDay      Boolean  @default(false)
+  color       String   @default("#3b82f6")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
