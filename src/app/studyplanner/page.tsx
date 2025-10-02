@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { View, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useSession } from "next-auth/react";
@@ -17,6 +16,7 @@ interface CalendarEvent {
   end: Date;
   allDay: boolean;
   color: string;
+  type?: string;
 }
 
 const PRESET_COLORS = [
@@ -43,7 +43,6 @@ const EVENT_TYPES = [
 const StudyPlannerPage = () => {
   const { data: session } = useSession();
   const [events, setEvents] = useState<CalendarEvent[]>([]);
-  const [view, setView] = useState<View>(Views.WEEK);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<{
@@ -313,13 +312,9 @@ const StudyPlannerPage = () => {
           events={events.filter((event) =>
             filterType === "all" ? true : event.type === filterType
           )}
-          startAccessor="start"
-          endAccessor="end"
           selectable
           onSelectEvent={handleSelectEvent}
           onSelectSlot={handleSelectSlot}
-          view={view}
-          onView={(v) => setView(v)}
           views={["month", "week", "day"]}
           style={{ height: "80vh" }}
         />
