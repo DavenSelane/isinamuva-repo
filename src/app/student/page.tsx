@@ -38,7 +38,7 @@ export default function Page() {
   const progressData: ProgressData[] = [
     { name: "Math", value: 80, fill: "#8884d8" },
     { name: "Science", value: 65, fill: "#82ca9d" },
-    { name: "History", value: 50, fill: "#ffc658" },
+    { name: "English", value: 50, fill: "#ffc658" },
   ];
 
   useEffect(() => {
@@ -92,7 +92,7 @@ export default function Page() {
                   <div className="text-center py-4">
                     <i className="fas fa-inbox fa-3x text-muted mb-3"></i>
                     <p className="text-muted mb-3">
-                      You haven't enrolled in any subjects yet
+                      You haven&apos;t enrolled in any subjects yet
                     </p>
                     <Link
                       href="/List/subjects"

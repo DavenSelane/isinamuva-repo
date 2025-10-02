@@ -51,18 +51,18 @@ const ChatInterface = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        // Display the specific error message from the API
         const errorMessage: Message = {
           id: Date.now() + 1,
           sender: "ai",
-          text: data.error || "Sorry, I'm having trouble connecting right now. Please try again later.",
+          text:
+            data.error ||
+            "Sorry, I&apos;m having trouble connecting right now. Please try again later.",
           timestamp: new Date(),
         };
         setMessages((prev) => [...prev, errorMessage]);
         return;
       }
 
-      // Handle both AI and fallback responses
       const aiMessage: Message = {
         id: Date.now() + 1,
         sender: "ai",
@@ -78,7 +78,7 @@ const ChatInterface = () => {
       const errorMessage: Message = {
         id: Date.now() + 1,
         sender: "ai",
-        text: "Sorry, I'm having trouble connecting right now. Please try again later.",
+        text: "Sorry, I&apos;m having trouble connecting right now. Please try again later.",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -141,10 +141,12 @@ const ChatInterface = () => {
                 <p className="text-sm text-gray-500">Online • Ready to help</p>
               </div>
             </div>
-            {messages.some(msg => msg.isFallback) && (
+            {messages.some((msg) => msg.isFallback) && (
               <div className="flex items-center space-x-2 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-full">
                 <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
-                <span className="text-xs font-medium text-amber-700">Educational Assistant Mode</span>
+                <span className="text-xs font-medium text-amber-700">
+                  Educational Assistant Mode
+                </span>
               </div>
             )}
           </div>
@@ -159,8 +161,9 @@ const ChatInterface = () => {
                 Welcome to AI Tutor!
               </h3>
               <p className="max-w-md mx-auto">
-                I'm here to help you with your studies. Ask me anything about
-                your subjects, homework, or learning challenges!
+                {
+                  "I&apos;m here to help you with your studies. Ask me anything about your subjects, homework, or learning challenges!"
+                }
               </p>
             </div>
           )}
@@ -178,7 +181,9 @@ const ChatInterface = () => {
                       : "bg-white text-gray-800 border border-gray-200 rounded-bl-md"
                   }`}
                 >
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                  <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                    {msg.text}
+                  </p>
                   <p
                     className={`text-xs mt-2 ${
                       msg.sender === "user" ? "text-blue-100" : "text-gray-500"
@@ -194,8 +199,16 @@ const ChatInterface = () => {
               {msg.fallbackMessage && msg.sender === "ai" && (
                 <div className="flex justify-start mt-1 ml-2">
                   <div className="flex items-center space-x-1.5 text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded">
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    <svg
+                      className="w-3 h-3"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     <span>{msg.fallbackMessage}</span>
                   </div>
@@ -263,7 +276,10 @@ const ChatInterface = () => {
             </button>
           </div>
           <p className="text-xs text-gray-500 mt-2 text-center">
-            Press Enter to send • {messages.some(msg => msg.isFallback) ? "Educational Assistant Mode active" : "AI responses powered by GPT-3.5"}
+            Press Enter to send •{" "}
+            {messages.some((msg) => msg.isFallback)
+              ? "Educational Assistant Mode active"
+              : "AI responses powered by GPT-3.5"}
           </p>
         </div>
       </div>

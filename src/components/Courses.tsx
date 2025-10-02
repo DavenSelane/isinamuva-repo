@@ -53,7 +53,7 @@ export const Courses = () => {
                     <small>(123)</small>
                   </div>
                   <h5 className="mb-4">
-                    Web Design & Development Course for Beginners
+                    Web Design &amp; Development Course for Beginners
                   </h5>
                 </div>
                 <div className="d-flex border-top">

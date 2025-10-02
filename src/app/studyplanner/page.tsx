@@ -20,7 +20,7 @@ const studyplanner = () => {
                   <div>
                     <h5 className="mb-1">Your current progress</h5>
                     <p className="mb-0">
-                      You're on track to achieve your goals this week!
+                      You&apos;re on track to achieve your goals this week!
                     </p>
                   </div>
                 </div>

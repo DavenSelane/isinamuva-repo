@@ -43,15 +43,18 @@ export default function PrivacyPolicyPage() {
               <div className="wow fadeInUp" data-wow-delay="0.1s">
                 <h2 className="mb-4">1. Introduction</h2>
                 <p>
-                  Isinamuva Application ("we," "our," or "us") is committed to
-                  protecting your privacy. This Privacy Policy explains how we
-                  collect, use, disclose, and safeguard your information when you
-                  use our Platform.
+                  Isinamuva Application (&quot;we,&quot; &quot;our,&quot; or
+                  &quot;us&quot;) is committed to protecting your privacy. This
+                  Privacy Policy explains how we collect, use, disclose, and
+                  safeguard your information when you use our Platform.
                 </p>
 
                 <h2 className="mb-4 mt-5">2. Information We Collect</h2>
                 <h4 className="mb-3">2.1 Personal Information</h4>
-                <p>We collect personal information that you provide to us, including:</p>
+                <p>
+                  We collect personal information that you provide to us,
+                  including:
+                </p>
                 <ul>
                   <li>Name and surname</li>
                   <li>Email address</li>
@@ -62,7 +65,9 @@ export default function PrivacyPolicyPage() {
                 </ul>
 
                 <h4 className="mb-3 mt-4">2.2 Academic Information</h4>
-                <p>We collect information related to your academic activities:</p>
+                <p>
+                  We collect information related to your academic activities:
+                </p>
                 <ul>
                   <li>Subjects enrolled</li>
                   <li>Assignment submissions</li>
@@ -72,7 +77,10 @@ export default function PrivacyPolicyPage() {
                 </ul>
 
                 <h4 className="mb-3 mt-4">2.3 Usage Information</h4>
-                <p>We automatically collect information about your use of the Platform:</p>
+                <p>
+                  We automatically collect information about your use of the
+                  Platform:
+                </p>
                 <ul>
                   <li>Login times and frequency</li>
                   <li>Pages visited</li>
@@ -85,11 +93,18 @@ export default function PrivacyPolicyPage() {
                 <p>We use the information we collect to:</p>
                 <ul>
                   <li>Provide and maintain the Platform</li>
-                  <li>Track your academic progress and provide personalized learning</li>
-                  <li>Communicate with you about your account and Platform updates</li>
+                  <li>
+                    Track your academic progress and provide personalized
+                    learning
+                  </li>
+                  <li>
+                    Communicate with you about your account and Platform updates
+                  </li>
                   <li>Improve our services and develop new features</li>
                   <li>Ensure the security and integrity of the Platform</li>
-                  <li>Respond to your inquiries and provide customer support</li>
+                  <li>
+                    Respond to your inquiries and provide customer support
+                  </li>
                   <li>Send you educational content and notifications</li>
                 </ul>
 
@@ -105,8 +120,9 @@ export default function PrivacyPolicyPage() {
                     provide educational support
                   </li>
                   <li>
-                    <strong>With Parents/Guardians:</strong> If you are under 18,
-                    your parent or guardian may access your academic information
+                    <strong>With Parents/Guardians:</strong> If you are under
+                    18, your parent or guardian may access your academic
+                    information
                   </li>
                   <li>
                     <strong>With Service Providers:</strong> We may share
@@ -129,10 +145,11 @@ export default function PrivacyPolicyPage() {
 
                 <h2 className="mb-4 mt-5">6. Data Retention</h2>
                 <p>
-                  We retain your personal information for as long as your account
-                  is active or as needed to provide you services. We will retain
-                  and use your information as necessary to comply with our legal
-                  obligations, resolve disputes, and enforce our agreements.
+                  We retain your personal information for as long as your
+                  account is active or as needed to provide you services. We
+                  will retain and use your information as necessary to comply
+                  with our legal obligations, resolve disputes, and enforce our
+                  agreements.
                 </p>
 
                 <h2 className="mb-4 mt-5">7. Your Rights</h2>
@@ -147,28 +164,32 @@ export default function PrivacyPolicyPage() {
                   <li>Withdraw consent at any time</li>
                 </ul>
 
-                <h2 className="mb-4 mt-5">8. Children's Privacy</h2>
+                <h2 className="mb-4 mt-5">8. Children&apos;s Privacy</h2>
                 <p>
-                  Our Platform is designed for high school students (Grades 8–12).
-                  For users under 18 years of age, we require parental consent
-                  before collecting personal information. Parents have the right
-                  to review, delete, or refuse further collection of their
-                  child's information.
+                  Our Platform is designed for high school students (Grades
+                  8&ndash;12). For users under 18 years of age, we require
+                  parental consent before collecting personal information.
+                  Parents have the right to review, delete, or refuse further
+                  collection of their child&apos;s information.
                 </p>
 
-                <h2 className="mb-4 mt-5">9. Cookies and Tracking Technologies</h2>
+                <h2 className="mb-4 mt-5">
+                  9. Cookies and Tracking Technologies
+                </h2>
                 <p>
                   We use cookies and similar tracking technologies to track
                   activity on our Platform and hold certain information. You can
-                  instruct your browser to refuse all cookies or to indicate when
-                  a cookie is being sent.
+                  instruct your browser to refuse all cookies or to indicate
+                  when a cookie is being sent.
                 </p>
 
-                <h2 className="mb-4 mt-5">10. Changes to This Privacy Policy</h2>
+                <h2 className="mb-4 mt-5">
+                  10. Changes to This Privacy Policy
+                </h2>
                 <p>
                   We may update our Privacy Policy from time to time. We will
                   notify you of any changes by posting the new Privacy Policy on
-                  this page and updating the "Last Updated" date.
+                  this page and updating the &quot;Last Updated&quot; date.
                 </p>
 
                 <h2 className="mb-4 mt-5">11. Contact Us</h2>

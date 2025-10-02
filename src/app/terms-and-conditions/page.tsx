@@ -13,7 +13,7 @@ export default function TermsAndConditionsPage() {
           <div className="row justify-content-center">
             <div className="col-lg-10 text-center">
               <h1 className="display-3 text-white animated slideInDown">
-                Terms & Conditions
+                Terms &amp; Conditions
               </h1>
               <nav aria-label="breadcrumb">
                 <ol className="breadcrumb justify-content-center">
@@ -26,7 +26,7 @@ export default function TermsAndConditionsPage() {
                     className="breadcrumb-item text-white active"
                     aria-current="page"
                   >
-                    Terms & Conditions
+                    Terms &amp; Conditions
                   </li>
                 </ol>
               </nav>
@@ -43,19 +43,19 @@ export default function TermsAndConditionsPage() {
               <div className="wow fadeInUp" data-wow-delay="0.1s">
                 <h2 className="mb-4">1. Acceptance of Terms</h2>
                 <p>
-                  By accessing and using the Isinamuva Application ("Platform"),
-                  you accept and agree to be bound by the terms and provision of
-                  this agreement. If you do not agree to these Terms and
-                  Conditions, please do not use our Platform.
+                  By accessing and using the Isinamuva Application
+                  (&quot;Platform&quot;), you accept and agree to be bound by
+                  the terms and provision of this agreement. If you do not agree
+                  to these Terms and Conditions, please do not use our Platform.
                 </p>
 
                 <h2 className="mb-4 mt-5">2. Use of the Platform</h2>
                 <p>
                   Isinamuva is a comprehensive digital platform designed for
-                  South African high school learners (Grades 8–12). The Platform
-                  provides subject-specific content, instructional videos,
-                  practice problems, real-time progress tracking, tutor bookings,
-                  peer collaboration, and reminders.
+                  South African high school learners (Grades 8&ndash;12). The
+                  Platform provides subject-specific content, instructional
+                  videos, practice problems, real-time progress tracking, tutor
+                  bookings, peer collaboration, and reminders.
                 </p>
                 <p>You agree to:</p>
                 <ul>
@@ -68,8 +68,8 @@ export default function TermsAndConditionsPage() {
                     national or international law or regulation
                   </li>
                   <li>
-                    Not engage in any conduct that restricts or inhibits anyone's
-                    use or enjoyment of the Platform
+                    Not engage in any conduct that restricts or inhibits
+                    anyone&apos;s use or enjoyment of the Platform
                   </li>
                   <li>
                     Not transmit any material that is defamatory, offensive, or
@@ -111,14 +111,16 @@ export default function TermsAndConditionsPage() {
                 <p>You may not:</p>
                 <ul>
                   <li>
-                    Modify, copy, or create derivative works based on the Platform
-                  </li>
-                  <li>
-                    Reverse engineer or attempt to extract the source code of the
+                    Modify, copy, or create derivative works based on the
                     Platform
                   </li>
                   <li>
-                    Remove, alter, or obscure any copyright or proprietary notices
+                    Reverse engineer or attempt to extract the source code of
+                    the Platform
+                  </li>
+                  <li>
+                    Remove, alter, or obscure any copyright or proprietary
+                    notices
                   </li>
                   <li>
                     Use the Platform for any commercial purpose without our
@@ -130,9 +132,10 @@ export default function TermsAndConditionsPage() {
                 <h2 className="mb-4 mt-5">7. Termination</h2>
                 <p>
                   We may terminate or suspend your account immediately, without
-                  prior notice or liability, for any reason whatsoever, including
-                  without limitation if you breach the Terms. Upon termination,
-                  your right to use the Platform will immediately cease.
+                  prior notice or liability, for any reason whatsoever,
+                  including without limitation if you breach the Terms. Upon
+                  termination, your right to use the Platform will immediately
+                  cease.
                 </p>
 
                 <h2 className="mb-4 mt-5">8. Limitation of Liability</h2>
@@ -152,7 +155,8 @@ export default function TermsAndConditionsPage() {
 
                 <h2 className="mb-4 mt-5">10. Contact Us</h2>
                 <p>
-                  If you have any questions about these Terms, please contact us:
+                  If you have any questions about these Terms, please contact
+                  us:
                 </p>
                 <ul>
                   <li>Email: isinamuvatutoring@gmail.com</li>

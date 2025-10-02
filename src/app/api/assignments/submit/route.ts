@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     const filePath = path.join(uploadsDir, fileName);
 
     // Save file
-    await writeFile(filePath, buffer);
+    await writeFile(filePath, new Uint8Array(buffer));
 
     // Create URL for the file
     const fileUrl = `/uploads/submissions/${fileName}`;

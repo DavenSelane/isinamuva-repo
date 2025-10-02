@@ -52,7 +52,7 @@ export async function GET(
         const filename = `${content.title.replace(/[^a-z0-9]/gi, "_")}${ext}`;
 
         // Return the file
-        return new NextResponse(fileBuffer, {
+        return new NextResponse(new Uint8Array(fileBuffer), {
           headers: {
             "Content-Type": contentType,
             "Content-Disposition": `inline; filename="${filename}"`,

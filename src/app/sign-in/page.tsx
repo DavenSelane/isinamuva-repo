@@ -30,11 +30,17 @@ export default function Login() {
   });
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
-    await signIn("credentials", {
+    const result = await signIn("credentials", {
+      redirect: false,
       email: values.email.toLowerCase(),
       password: values.password,
-      callbackUrl: "/home",
     });
+
+    if (result?.ok) {
+      router.push("/home");
+    } else {
+      alert(result?.error || "Login failed. Please try again.");
+    }
   };
 
   return (
@@ -58,6 +64,7 @@ export default function Login() {
                       {...register("email")}
                       className="form-control"
                       placeholder="Email"
+                      aria-label="Email"
                     />
                     {errors.email && (
                       <p className="text-danger small">
@@ -73,6 +80,7 @@ export default function Login() {
                       {...register("password")}
                       className="form-control"
                       placeholder="Password"
+                      aria-label="Password"
                     />
                     {errors.password && (
                       <p className="text-danger small">
@@ -86,9 +94,10 @@ export default function Login() {
                   </button>
                 </div>
               </form>
+
               <div className="mt-3 text-center">
                 <p className="text-sm">
-                  Don't have an account?{" "}
+                  Don&apos;t have an account?{" "}
                   <Link
                     href="/register"
                     className="text-blue-600 hover:underline"
