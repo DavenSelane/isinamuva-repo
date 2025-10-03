@@ -1,4 +1,6 @@
 // app/components/Courses.tsx
+import Image from "next/image";
+
 export const Courses = () => {
   const courseList = [
     { id: 1, img: "/assets/img/course-1.jpg" },
@@ -24,7 +26,13 @@ export const Courses = () => {
             >
               <div className="course-item bg-light">
                 <div className="position-relative overflow-hidden">
-                  <img className="img-fluid" src={img} alt={`Course ${id}`} />
+                  <Image
+                    className="img-fluid"
+                    src={img}
+                    alt={`Course ${id}`}
+                    width={400}
+                    height={250}
+                  />
                   <div className="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
                     <a
                       href="#"

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useSession } from "next-auth/react";
@@ -64,28 +64,29 @@ const StudyPlannerPage = () => {
   const [filterType, setFilterType] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch("/api/calendar");
-        if (response.ok) {
-          const data = await response.json();
-          const formattedEvents = data.map((event: any) => ({
-            ...event,
-            start: new Date(event.start),
-            end: new Date(event.end),
-          }));
-          setEvents(formattedEvents);
-        }
-      } catch (error) {
-        console.error("Error fetching events:", error);
-        toast.error("Failed to load calendar events");
-      } finally {
-        setLoading(false);
+  const fetchEvents = useCallback(async () => {
+    try {
+      const response = await fetch("/api/calendar");
+      if (response.ok) {
+        const data = await response.json();
+        const formattedEvents = data.map((event: any) => ({
+          ...event,
+          start: new Date(event.start),
+          end: new Date(event.end),
+        }));
+        setEvents(formattedEvents);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching events:", error);
+      toast.error("Failed to load calendar events");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
     fetchEvents();
-  }, [session]);
+  }, [fetchEvents]);
 
   const handleSelectSlot = ({ start, end }: { start: Date; end: Date }) => {
     setSelectedSlot({ start, end });

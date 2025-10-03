@@ -4,13 +4,17 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import Image from "next/image";
 
-export default function SearchInput({ placeholder = "Search..." }: { placeholder?: string }) {
+export default function SearchInput({
+  placeholder = "Search...",
+}: {
+  placeholder?: string;
+}) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
 
   const handleSearch = useDebouncedCallback((term: string) => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams || "");
     params.set("page", "1"); // Reset to page 1 on new search
     if (term) {
       params.set("search", term);
@@ -42,7 +46,7 @@ export default function SearchInput({ placeholder = "Search..." }: { placeholder
         className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none sm:text-sm transition-colors"
         placeholder={placeholder}
         onChange={(e) => handleSearch(e.target.value)}
-        defaultValue={searchParams.get("search")?.toString()}
+        defaultValue={searchParams?.get("search")?.toString()}
       />
     </div>
   );

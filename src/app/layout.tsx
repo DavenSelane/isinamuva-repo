@@ -78,7 +78,10 @@ export default function RootLayout({
         />
         <Script src="/lib/wow/wow.min.js" strategy="afterInteractive" />
         <Script src="/lib/easing/easing.min.js" strategy="afterInteractive" />
-        <Script src="/lib/waypoints/waypoints.min.js" strategy="afterInteractive" />
+        <Script
+          src="/lib/waypoints/waypoints.min.js"
+          strategy="afterInteractive"
+        />
         <Script
           src="/lib/owlcarousel/owl.carousel.min.js"
           strategy="beforeInteractive"

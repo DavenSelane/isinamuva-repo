@@ -1,7 +1,9 @@
  import { DB } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import {hash} from "bcrypt"; 
+import {hash} from "bcrypt";
 import z from "zod";
+
+export const dynamic = 'force-dynamic';
 
 
 

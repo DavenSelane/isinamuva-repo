@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import Image from "next/image";
 import { CldUploadWidget } from "next-cloudinary";
@@ -84,31 +84,32 @@ const Page = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [subjectsRes, gradesRes] = await Promise.all([
-          fetch("/api/subjects"),
-          fetch("/api/grades"),
-        ]);
+  const fetchData = useCallback(async () => {
+    try {
+      const [subjectsRes, gradesRes] = await Promise.all([
+        fetch("/api/subjects"),
+        fetch("/api/grades"),
+      ]);
 
-        if (subjectsRes.ok) {
-          const subjectsData = await subjectsRes.json();
-          console.log("Fetched subjects:", subjectsData);
-          setSubjects(subjectsData);
-        }
-
-        if (gradesRes.ok) {
-          const gradesData = await gradesRes.json();
-          console.log("Fetched grades:", gradesData);
-          setGrades(gradesData);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
+      if (subjectsRes.ok) {
+        const subjectsData = await subjectsRes.json();
+        console.log("Fetched subjects:", subjectsData);
+        setSubjects(subjectsData);
       }
-    };
-    fetchData();
+
+      if (gradesRes.ok) {
+        const gradesData = await gradesRes.json();
+        console.log("Fetched grades:", gradesData);
+        setGrades(gradesData);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const onSubmit = async (data: ContentSchema) => {
     setLoading(true);
@@ -175,11 +176,18 @@ const Page = () => {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Create New Content</h1>
-          <p className="text-gray-600">Add educational materials for students to access</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Create New Content
+          </h1>
+          <p className="text-gray-600">
+            Add educational materials for students to access
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-xl shadow-lg p-8 space-y-8">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="bg-white rounded-xl shadow-lg p-8 space-y-8"
+        >
           {error && (
             <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
               <p className="text-red-700">{error}</p>
@@ -189,14 +197,23 @@ const Page = () => {
           {/* Step 1: Content Type */}
           <div className="space-y-4">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
-              <h2 className="text-xl font-semibold text-gray-900">Select Content Type</h2>
+              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
+                1
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900">
+                Select Content Type
+              </h2>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Content Type</label>
-                <select {...register("type")} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                <label className="block text-sm font-medium text-gray-700">
+                  Content Type
+                </label>
+                <select
+                  {...register("type")}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                >
                   <option value="">Choose a Content Type</option>
                   <option value="VIDEO">📹 Video</option>
                   <option value="DOCUMENT">📄 Document</option>
@@ -208,7 +225,9 @@ const Page = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Upload Media</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Upload Media
+                </label>
                 <div className="relative">
                   <input
                     id="file-upload"
@@ -232,9 +251,18 @@ const Page = () => {
                         : "border-blue-300 bg-blue-50 hover:bg-blue-100"
                     }`}
                   >
-                    <Image src="/upload.png" alt="Upload" width={24} height={24} />
+                    <Image
+                      src="/upload.png"
+                      alt="Upload"
+                      width={24}
+                      height={24}
+                    />
                     <span className="text-sm font-medium text-gray-700">
-                      {uploading ? "Uploading..." : uploadedFileName ? `✓ ${uploadedFileName}` : "Choose file"}
+                      {uploading
+                        ? "Uploading..."
+                        : uploadedFileName
+                        ? `✓ ${uploadedFileName}`
+                        : "Choose file"}
                     </span>
                   </label>
                 </div>
@@ -245,14 +273,20 @@ const Page = () => {
           {/* Step 2: Content Details */}
           <div className="space-y-4">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
-              <h2 className="text-xl font-semibold text-gray-900">Content Details</h2>
+              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">
+                2
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900">
+                Content Details
+              </h2>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
               {/* Title */}
               <div className="md:col-span-2 space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Title *</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Title *
+                </label>
                 <input
                   type="text"
                   {...register("title")}
@@ -266,8 +300,13 @@ const Page = () => {
 
               {/* Subject */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Subject *</label>
-                <select {...register("subjectId")} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                <label className="block text-sm font-medium text-gray-700">
+                  Subject *
+                </label>
+                <select
+                  {...register("subjectId")}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                >
                   <option value="">Choose a Subject</option>
                   {(subjects || []).map((subject) => (
                     <option key={subject.id} value={subject.id}>
@@ -276,14 +315,21 @@ const Page = () => {
                   ))}
                 </select>
                 {errors.subjectId && (
-                  <p className="text-sm text-red-600">{errors.subjectId.message}</p>
+                  <p className="text-sm text-red-600">
+                    {errors.subjectId.message}
+                  </p>
                 )}
               </div>
 
               {/* Grades */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Grade *</label>
-                <select {...register("grades")} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                <label className="block text-sm font-medium text-gray-700">
+                  Grade *
+                </label>
+                <select
+                  {...register("grades")}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                >
                   <option value="">Choose a Grade</option>
                   {(grades || []).map((grade) => (
                     <option key={grade.id} value={grade.id}>
@@ -292,13 +338,17 @@ const Page = () => {
                   ))}
                 </select>
                 {errors.grades && (
-                  <p className="text-sm text-red-600">{errors.grades.message}</p>
+                  <p className="text-sm text-red-600">
+                    {errors.grades.message}
+                  </p>
                 )}
               </div>
 
               {/* Author ID */}
               <div className="md:col-span-2 space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Author ID (optional)</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Author ID (optional)
+                </label>
                 <input
                   type="number"
                   {...register("authorId")}
@@ -306,13 +356,17 @@ const Page = () => {
                   placeholder="Enter author ID"
                 />
                 {errors.authorId && (
-                  <p className="text-sm text-red-600">{errors.authorId.message}</p>
+                  <p className="text-sm text-red-600">
+                    {errors.authorId.message}
+                  </p>
                 )}
               </div>
 
               {/* Description */}
               <div className="md:col-span-2 space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Description *</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Description *
+                </label>
                 <textarea
                   {...register("description")}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
@@ -320,13 +374,17 @@ const Page = () => {
                   rows={4}
                 ></textarea>
                 {errors.description && (
-                  <p className="text-sm text-red-600">{errors.description.message}</p>
+                  <p className="text-sm text-red-600">
+                    {errors.description.message}
+                  </p>
                 )}
               </div>
 
               {/* Body */}
               <div className="md:col-span-2 space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Content Body (optional)</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Content Body (optional)
+                </label>
                 <textarea
                   {...register("body")}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
@@ -341,7 +399,9 @@ const Page = () => {
               {/* Conditional Fields */}
               {selectedType === "VIDEO" && (
                 <div className="md:col-span-2 space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Video URL</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Video URL
+                  </label>
                   <input
                     type="text"
                     {...register("videoUrl")}
@@ -349,13 +409,17 @@ const Page = () => {
                     placeholder="Video URL (automatically set after upload)"
                     readOnly
                   />
-                  <p className="text-xs text-gray-500">Upload a video file above to set this automatically</p>
+                  <p className="text-xs text-gray-500">
+                    Upload a video file above to set this automatically
+                  </p>
                 </div>
               )}
 
               {selectedType === "DOCUMENT" && (
                 <div className="md:col-span-2 space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">Document URL</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Document URL
+                  </label>
                   <input
                     type="text"
                     {...register("documentUrl")}
@@ -363,13 +427,17 @@ const Page = () => {
                     placeholder="Document URL (automatically set after upload)"
                     readOnly
                   />
-                  <p className="text-xs text-gray-500">Upload a document file above to set this automatically</p>
+                  <p className="text-xs text-gray-500">
+                    Upload a document file above to set this automatically
+                  </p>
                 </div>
               )}
 
               {/* Image URL */}
               <div className="md:col-span-2 space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Thumbnail Image</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Thumbnail Image
+                </label>
                 <input
                   type="text"
                   {...register("imageUrl")}
@@ -377,19 +445,25 @@ const Page = () => {
                   placeholder="Image URL (automatically set after upload)"
                   readOnly
                 />
-                <p className="text-xs text-gray-500">Upload an image file above to set thumbnail (optional)</p>
+                <p className="text-xs text-gray-500">
+                  Upload an image file above to set thumbnail (optional)
+                </p>
               </div>
 
               {/* Tags */}
               <div className="md:col-span-2 space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Tags (optional)</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Tags (optional)
+                </label>
                 <input
                   type="text"
                   {...register("tags")}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   placeholder="e.g., algebra, equations, mathematics"
                 />
-                <p className="text-xs text-gray-500">Separate tags with commas</p>
+                <p className="text-xs text-gray-500">
+                  Separate tags with commas
+                </p>
                 {errors.tags && (
                   <p className="text-sm text-red-600">{errors.tags.message}</p>
                 )}
@@ -405,7 +479,12 @@ const Page = () => {
                     defaultChecked
                     id="allowComments"
                   />
-                  <label htmlFor="allowComments" className="text-sm font-medium text-gray-700">Allow comments on this content</label>
+                  <label
+                    htmlFor="allowComments"
+                    className="text-sm font-medium text-gray-700"
+                  >
+                    Allow comments on this content
+                  </label>
                 </div>
                 <div className="flex items-center gap-3">
                   <input
@@ -414,7 +493,12 @@ const Page = () => {
                     className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
                     id="featured"
                   />
-                  <label htmlFor="featured" className="text-sm font-medium text-gray-700">Mark as featured content</label>
+                  <label
+                    htmlFor="featured"
+                    className="text-sm font-medium text-gray-700"
+                  >
+                    Mark as featured content
+                  </label>
                 </div>
               </div>
             </div>
@@ -437,8 +521,20 @@ const Page = () => {
               {loading ? (
                 <span className="flex items-center gap-2">
                   <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      fill="none"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
                   </svg>
                   Publishing...
                 </span>

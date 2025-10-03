@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "npx prisma generate && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "export": "next export"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -36,6 +37,7 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^15.5.4",
     "@types/bcrypt": "^6.0.0",
     "@types/date-fns": "^2.5.3",
     "@types/formidable": "^3.4.5",
@@ -50,8 +52,5 @@
     "tailwindcss": "^3.4.17",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
-  },
-  "prisma": {
-    "seed": "ts-node prisma/seed.ts"
   }
 }

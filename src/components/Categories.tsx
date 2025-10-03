@@ -1,4 +1,7 @@
 // app/components/Categories.tsx
+
+import Image from "next/image";
+
 export const Categories = () => (
   <div className="container-xxl py-5 category">
     <div className="container">
@@ -21,10 +24,12 @@ export const Categories = () => (
                   className="position-relative d-block overflow-hidden"
                   href="#"
                 >
-                  <img
+                  <Image
                     className="img-fluid"
                     src={`/assets/img/cat-${num}.jpg`}
                     alt={`Category ${num}`}
+                    width={400}
+                    height={250}
                   />
                   <div
                     className="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3"
@@ -53,10 +58,11 @@ export const Categories = () => (
             className="position-relative d-block h-100 overflow-hidden"
             href="#"
           >
-            <img
+            <Image
               className="img-fluid position-absolute w-100 h-100"
               src="/assets/img/cat-4.jpg"
               alt="Category 4"
+              fill
               style={{ objectFit: "cover" }}
             />
             <div

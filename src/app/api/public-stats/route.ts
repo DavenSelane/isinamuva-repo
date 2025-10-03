@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { DB } from "@/lib/prisma";
 
+export const dynamic = 'force-dynamic';
+
 // GET public statistics (no authentication required)
 export async function GET() {
   try {

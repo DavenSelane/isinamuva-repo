@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import {
   BarChart,
@@ -59,7 +59,7 @@ const ProgressPage = () => {
   const [viewMode, setViewMode] = useState<"overall" | "subject">("overall");
   const [refreshKey, setRefreshKey] = useState(0);
 
-  const fetchResults = async () => {
+  const fetchResults = useCallback(async () => {
     try {
       if (session?.user?.id) {
         const response = await fetch(
@@ -75,11 +75,11 @@ const ProgressPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [session?.user?.id]);
 
   useEffect(() => {
     fetchResults();
-  }, [session, refreshKey]);
+  }, [fetchResults, refreshKey]);
 
   // Auto-refresh every 30 seconds to check for new graded assignments
   useEffect(() => {

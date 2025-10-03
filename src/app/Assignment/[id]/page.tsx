@@ -58,12 +58,21 @@ const AssignmentDetailPage = () => {
   const [assignment, setAssignment] = useState<Assignment | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [mySubmission, setMySubmission] = useState<Assignment["results"][0] | null>(null);
+  const [mySubmission, setMySubmission] = useState<
+    Assignment["results"][0] | null
+  >(null);
 
   useEffect(() => {
+    const id = params?.id;
+    if (!id) {
+      toast.error("Invalid assignment ID");
+      router.push("/Assignment");
+      return;
+    }
+
     const fetchAssignment = async () => {
       try {
-        const response = await fetch(`/api/assignment/${params.id}`);
+        const response = await fetch(`/api/assignment/${id}`);
         if (!response.ok) {
           if (response.status === 404) {
             toast.error("Assignment not found");
@@ -91,7 +100,7 @@ const AssignmentDetailPage = () => {
     };
 
     fetchAssignment();
-  }, [params.id, session, router]);
+  }, [params?.id, session, router]);
 
   const handleUpload = async (url: string) => {
     setUploading(true);
@@ -150,7 +159,8 @@ const AssignmentDetailPage = () => {
   const daysRemaining = Math.floor(hoursRemaining / 24);
 
   const isStudent = session?.user?.role === "STUDENT";
-  const isTutorOrAdmin = session?.user?.role === "TUTOR" || session?.user?.role === "ADMIN";
+  const isTutorOrAdmin =
+    session?.user?.role === "TUTOR" || session?.user?.role === "ADMIN";
 
   return (
     <div className="container mt-5 mb-5">
@@ -249,7 +259,10 @@ const AssignmentDetailPage = () => {
         <div className="card border-0 shadow-sm mb-4">
           <div className="card-body">
             <h5 className="card-title mb-3">Assignment Image</h5>
-            <div className="position-relative" style={{ width: "100%", height: "400px" }}>
+            <div
+              className="position-relative"
+              style={{ width: "100%", height: "400px" }}
+            >
               <Image
                 src={assignment.imgUrl}
                 alt={assignment.title}
@@ -318,7 +331,8 @@ const AssignmentDetailPage = () => {
                     <strong>Submission Received</strong>
                     <p className="mb-2">
                       <small className="text-muted">
-                        Submitted: {new Date(mySubmission.submittedAt).toLocaleString()}
+                        Submitted:{" "}
+                        {new Date(mySubmission.submittedAt).toLocaleString()}
                       </small>
                     </p>
                     {mySubmission.submissionUrl && (
@@ -336,7 +350,10 @@ const AssignmentDetailPage = () => {
                       <div className="mt-2 p-2 bg-white rounded">
                         <strong className="text-success">
                           Score: {mySubmission.score}/{assignment.maxScore} (
-                          {Math.round((mySubmission.score / assignment.maxScore) * 100)}%)
+                          {Math.round(
+                            (mySubmission.score / assignment.maxScore) * 100
+                          )}
+                          %)
                         </strong>
                       </div>
                     )}
@@ -346,7 +363,8 @@ const AssignmentDetailPage = () => {
             ) : (
               <div className="alert alert-warning border-0">
                 <i className="fas fa-exclamation-triangle me-2"></i>
-                <strong>Not yet submitted!</strong> Upload your work before the deadline.
+                <strong>Not yet submitted!</strong> Upload your work before the
+                deadline.
               </div>
             )}
 
@@ -354,7 +372,9 @@ const AssignmentDetailPage = () => {
               <div suppressHydrationWarning>
                 <CldUploadWidget
                   uploadPreset="Isinamuva"
-                  onSuccess={(result: any) => handleUpload(result.info.secure_url)}
+                  onSuccess={(result: any) =>
+                    handleUpload(result.info.secure_url)
+                  }
                 >
                   {({ open }) => (
                     <button
@@ -384,63 +404,67 @@ const AssignmentDetailPage = () => {
       )}
 
       {/* All Submissions (for Tutors/Admins) */}
-      {isTutorOrAdmin && assignment.results && assignment.results.length > 0 && (
-        <div className="card border-0 shadow-sm mb-4">
-          <div className="card-body">
-            <h5 className="card-title mb-3">Student Submissions</h5>
-            <div className="table-responsive">
-              <table className="table table-hover">
-                <thead>
-                  <tr>
-                    <th>Student</th>
-                    <th>Submitted At</th>
-                    <th>Status</th>
-                    <th>Score</th>
-                    <th>Submission</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {assignment.results.map((result) => (
-                    <tr key={result.id}>
-                      <td>
-                        {result.student.firstName} {result.student.lastName}
-                      </td>
-                      <td>{new Date(result.submittedAt).toLocaleString()}</td>
-                      <td>
-                        <span
-                          className={`badge ${
-                            result.status === "graded" ? "bg-success" : "bg-info"
-                          }`}
-                        >
-                          {result.status}
-                        </span>
-                      </td>
-                      <td>
-                        {result.status === "graded"
-                          ? `${result.score}/${assignment.maxScore}`
-                          : "-"}
-                      </td>
-                      <td>
-                        {result.submissionUrl && (
-                          <a
-                            href={result.submissionUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn btn-sm btn-outline-primary"
-                          >
-                            <i className="fas fa-eye me-1"></i>
-                            View
-                          </a>
-                        )}
-                      </td>
+      {isTutorOrAdmin &&
+        assignment.results &&
+        assignment.results.length > 0 && (
+          <div className="card border-0 shadow-sm mb-4">
+            <div className="card-body">
+              <h5 className="card-title mb-3">Student Submissions</h5>
+              <div className="table-responsive">
+                <table className="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Student</th>
+                      <th>Submitted At</th>
+                      <th>Status</th>
+                      <th>Score</th>
+                      <th>Submission</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {assignment.results.map((result) => (
+                      <tr key={result.id}>
+                        <td>
+                          {result.student.firstName} {result.student.lastName}
+                        </td>
+                        <td>{new Date(result.submittedAt).toLocaleString()}</td>
+                        <td>
+                          <span
+                            className={`badge ${
+                              result.status === "graded"
+                                ? "bg-success"
+                                : "bg-info"
+                            }`}
+                          >
+                            {result.status}
+                          </span>
+                        </td>
+                        <td>
+                          {result.status === "graded"
+                            ? `${result.score}/${assignment.maxScore}`
+                            : "-"}
+                        </td>
+                        <td>
+                          {result.submissionUrl && (
+                            <a
+                              href={result.submissionUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn btn-sm btn-outline-primary"
+                            >
+                              <i className="fas fa-eye me-1"></i>
+                              View
+                            </a>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 };
